@@ -1,7 +1,7 @@
 from LAB02.cipher.caesar.alphabet import ALPHABET
 
 class CaesarCipher:
-    def __init__(self, shift):
+    def __init__(self):
         self.alphabet = ALPHABET
     def encrypt_text(self, text: str, key: int) -> str:
         alphabet_len = len(self.alphabet)

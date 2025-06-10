@@ -1,0 +1,187 @@
+Index: LAB02/api.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import Flask, request, jsonify\r\nfrom LAB02.cipher.caesar import CaesarCipher\r\nfrom LAB02.cipher.vigenere import VigenereCipher\r\nfrom LAB02.cipher.railfence import RailfenceCipher\r\napp = Flask(__name__)\r\n\r\n\r\n#Caesar cipher\r\ncaesar_cipher = CaesarCipher(shift=0)\r\n@app.route(\"/api/caesar/encrypt\", methods=[\"POST\"])\r\ndef caesar_encrypt():\r\n    data = request.json\r\n    plain_text = data[\"plain_text\"]\r\n    key = int(data[\"key\"])\r\n    encrypted_text = caesar_cipher.encrypt_text(plain_text, key)\r\n    return jsonify({\"encrypted_text\": encrypted_text})\r\n\r\n@app.route(\"/api/caesar/decrypt\", methods=[\"POST\"])\r\ndef caesar_decrypt():\r\n    data = request.json\r\n    cipher_text = data[\"cipher_text\"]\r\n    key = int(data[\"key\"])\r\n    decrypted_text = caesar_cipher.decrypt_text(cipher_text, key)\r\n    return jsonify({\"decrypted_text\": decrypted_text})\r\n\r\n#Vigenere cipher\r\n\r\nvigenere_cipher = VigenereCipher()\r\n@app.route(\"/api/vigenere/encrypt\", methods=[\"POST\"])\r\ndef vigenere_encrypt():\r\n    data = request.json\r\n    plain_text = data['plain_text']\r\n    key = data['key']\r\n    encrypted_text = vigenere_cipher.vigenere_encrypt(plain_text, key)\r\n    return jsonify({\"encrypted_text\": encrypted_text})\r\n\r\n@app.route(\"/api/vigenere/decrypt\", methods=[\"POST\"])\r\ndef vigenere_decrypt():\r\n    data = request.json\r\n    cipher_text = data[\"cipher_text\"]\r\n    key = data[\"key\"]\r\n    decrypted_text = vigenere_cipher.vigenere_decrypt(cipher_text, key)\r\n    return jsonify({\"decrypted_text\": decrypted_text})\r\n\r\n#Rail Fence Cipher\r\nrailfence_cipher = RailfenceCipher()\r\n@app.route(\"/api/railfence/encrypt\", methods=[\"POST\"])\r\ndef railfence_encrypt():\r\n    data = request.json\r\n    plain_text = data[\"plain_text\"]\r\n    key = int(data[\"key\"])\r\n    encrypted_text = railfence_cipher.railfence_encrypt(plain_text, key)\r\n    return jsonify({\"encrypted_text\": encrypted_text})\r\n@app.route(\"/api/railfence/decrypt\", methods=[\"POST\"])\r\ndef railfence_decrypt():\r\n    data = request.json\r\n    cipher_text = data[\"cipher_text\"]\r\n    key = int(data[\"key\"])\r\n    decrypted_text = railfence_cipher.railfence_decrypt(cipher_text, key)\r\n    return jsonify({\"decrypted_text\": decrypted_text})\r\n\r\nif __name__ == '__main__':\r\n    app.run(host='0.0.0.0', port=5000, debug=True)
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/LAB02/api.py b/LAB02/api.py
+--- a/LAB02/api.py	(revision 09766d64156550475f26a59e78b75e66037c65ba)
++++ b/LAB02/api.py	(date 1748337249270)
+@@ -1,63 +1,129 @@
+-from flask import Flask, request, jsonify
++from flask import Flask, render_template, request
+ from LAB02.cipher.caesar import CaesarCipher
++from LAB02.cipher.playfair import PlayFairCipher
+ from LAB02.cipher.vigenere import VigenereCipher
+ from LAB02.cipher.railfence import RailfenceCipher
++
+ app = Flask(__name__)
+ 
++@app.route('/')
++def home():
++    return render_template('index.html')
++
++
++# —— CAESAR —— #
++@app.route('/ceasar')
++def ceasar_page():
++    return render_template('ceasar.html')
++
++@app.route('/encrypt', methods=['POST'])
++def ceasar_encrypt():
++    text = request.form['inputPlainText']
++    key  = int(request.form['inputKeyPlain'])
++    cipher = CaesarCipher(shift=0)
++    encrypted = cipher.encrypt_text(text, key)
++    return f"text: {text}<br/>key: {key}<br/>encrypted text: {encrypted}"
+ 
+-#Caesar cipher
+-caesar_cipher = CaesarCipher(shift=0)
+-@app.route("/api/caesar/encrypt", methods=["POST"])
+-def caesar_encrypt():
+-    data = request.json
+-    plain_text = data["plain_text"]
+-    key = int(data["key"])
+-    encrypted_text = caesar_cipher.encrypt_text(plain_text, key)
+-    return jsonify({"encrypted_text": encrypted_text})
++@app.route('/decrypt', methods=['POST'])
++def ceasar_decrypt():
++    text = request.form['inputCipherText']
++    key  = int(request.form['inputKeyCipher'])
++    cipher = CaesarCipher(shift=0)
++    decrypted = cipher.decrypt_text(text, key)
++    return f"cipher text: {text}<br/>key: {key}<br/>decrypted text: {decrypted}"
+ 
+-@app.route("/api/caesar/decrypt", methods=["POST"])
+-def caesar_decrypt():
+-    data = request.json
+-    cipher_text = data["cipher_text"]
+-    key = int(data["key"])
+-    decrypted_text = caesar_cipher.decrypt_text(cipher_text, key)
+-    return jsonify({"decrypted_text": decrypted_text})
+ 
+-#Vigenere cipher
++# —— PLAYFAIR —— #
++@app.route('/playfair')
++def playfair_page():
++    return render_template('playfair.html')
+ 
+-vigenere_cipher = VigenereCipher()
+-@app.route("/api/vigenere/encrypt", methods=["POST"])
++@app.route('/playfair/encrypt', methods=['POST'])
++def playfair_encrypt():
++    plaintext = request.form['plain_text']
++    key       = request.form['key']
++    pf        = PlayFairCipher()
++    matrix    = pf.create_playfair_matrix(key)
++    ciphertext = pf.playfair_encrypt(plaintext, matrix)
++    return (
++        f"plaintext: {plaintext}<br/>"
++        f"key: {key}<br/>"
++        f"ciphertext: {ciphertext}"
++    )
++
++@app.route('/playfair/decrypt', methods=['POST'])
++def playfair_decrypt():
++    ciphertext = request.form['cipher_text']
++    key        = request.form['key']
++    pf         = PlayFairCipher()
++    matrix     = pf.create_playfair_matrix(key)
++    plaintext  = pf.playfair_decrypt(ciphertext, matrix)
++    return (
++        f"ciphertext: {ciphertext}<br/>"
++        f"key: {key}<br/>"
++        f"plaintext: {plaintext}"
++    )
++
++
++# —— VIGENÈRE —— #
++@app.route('/vigenere')
++def vigenere_page():
++    return render_template('vigenere.html')
++
++@app.route('/vigenere/encrypt', methods=['POST'])
+ def vigenere_encrypt():
+-    data = request.json
+-    plain_text = data['plain_text']
+-    key = data['key']
+-    encrypted_text = vigenere_cipher.vigenere_encrypt(plain_text, key)
+-    return jsonify({"encrypted_text": encrypted_text})
++    plaintext = request.form['plain_text']
++    key       = request.form['key']
++    vg        = VigenereCipher()
++    ciphertext = vg.vigenere_encrypt(plaintext, key)
++    return (
++        f"plaintext: {plaintext}<br/>"
++        f"key: {key}<br/>"
++        f"ciphertext: {ciphertext}"
++    )
+ 
+-@app.route("/api/vigenere/decrypt", methods=["POST"])
++@app.route('/vigenere/decrypt', methods=['POST'])
+ def vigenere_decrypt():
+-    data = request.json
+-    cipher_text = data["cipher_text"]
+-    key = data["key"]
+-    decrypted_text = vigenere_cipher.vigenere_decrypt(cipher_text, key)
+-    return jsonify({"decrypted_text": decrypted_text})
++    ciphertext = request.form['cipher_text']
++    key        = request.form['key']
++    vg         = VigenereCipher()
++    plaintext  = vg.vigenere_decrypt(ciphertext, key)
++    return (
++        f"ciphertext: {ciphertext}<br/>"
++        f"key: {key}<br/>"
++        f"plaintext: {plaintext}"
++    )
++
+ 
+-#Rail Fence Cipher
+-railfence_cipher = RailfenceCipher()
+-@app.route("/api/railfence/encrypt", methods=["POST"])
++# —— RAILFENCE —— #
++@app.route('/railfence')
++def railfence_page():
++    return render_template('railfence.html')
++
++@app.route('/railfence/encrypt', methods=['POST'])
+ def railfence_encrypt():
+-    data = request.json
+-    plain_text = data["plain_text"]
+-    key = int(data["key"])
+-    encrypted_text = railfence_cipher.railfence_encrypt(plain_text, key)
+-    return jsonify({"encrypted_text": encrypted_text})
+-@app.route("/api/railfence/decrypt", methods=["POST"])
++    plaintext = request.form['plain_text']
++    rails     = int(request.form['key'])
++    rf        = RailfenceCipher()
++    ciphertext = rf.railfence_encrypt(plaintext, rails)
++    return (
++        f"plaintext: {plaintext}<br/>"
++        f"rails: {rails}<br/>"
++        f"ciphertext: {ciphertext}"
++    )
++
++@app.route('/railfence/decrypt', methods=['POST'])
+ def railfence_decrypt():
+-    data = request.json
+-    cipher_text = data["cipher_text"]
+-    key = int(data["key"])
+-    decrypted_text = railfence_cipher.railfence_decrypt(cipher_text, key)
+-    return jsonify({"decrypted_text": decrypted_text})
++    ciphertext = request.form['cipher_text']
++    rails      = int(request.form['key'])
++    rf         = RailfenceCipher()
++    plaintext  = rf.railfence_decrypt(ciphertext, rails)
++    return (
++        f"ciphertext: {ciphertext}<br/>"
++        f"rails: {rails}<br/>"
++        f"plaintext: {plaintext}"
++    )
++
+ 
+ if __name__ == '__main__':
+-    app.run(host='0.0.0.0', port=5000, debug=True)
+\ No newline at end of file
++    app.run(host='0.0.0.0', port=5050, debug=True)

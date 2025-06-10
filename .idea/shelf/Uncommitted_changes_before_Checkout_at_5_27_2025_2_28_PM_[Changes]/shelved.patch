@@ -1,0 +1,61 @@
+Index: LAB02/api.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from flask import Flask, request, jsonify\r\nfrom LAB02.cipher.caesar import CaesarCipher\r\nfrom LAB02.cipher.vigenere import VigenereCipher\r\nfrom LAB02.cipher.railfence import RailfenceCipher\r\napp = Flask(__name__)\r\n\r\n\r\n#Caesar cipher\r\ncaesar_cipher = CaesarCipher(shift=0)\r\n@app.route(\"/api/caesar/encrypt\", methods=[\"POST\"])\r\ndef caesar_encrypt():\r\n    data = request.json\r\n    plain_text = data[\"plain_text\"]\r\n    key = int(data[\"key\"])\r\n    encrypted_text = caesar_cipher.encrypt_text(plain_text, key)\r\n    return jsonify({\"encrypted_text\": encrypted_text})\r\n\r\n@app.route(\"/api/caesar/decrypt\", methods=[\"POST\"])\r\ndef caesar_decrypt():\r\n    data = request.json\r\n    cipher_text = data[\"cipher_text\"]\r\n    key = int(data[\"key\"])\r\n    decrypted_text = caesar_cipher.decrypt_text(cipher_text, key)\r\n    return jsonify({\"decrypted_text\": decrypted_text})\r\n\r\n#Vigenere cipher\r\n\r\nvigenere_cipher = VigenereCipher()\r\n@app.route(\"/api/vigenere/encrypt\", methods=[\"POST\"])\r\ndef vigenere_encrypt():\r\n    data = request.json\r\n    plain_text = data['plain_text']\r\n    key = data['key']\r\n    encrypted_text = vigenere_cipher.vigenere_encrypt(plain_text, key)\r\n    return jsonify({\"encrypted_text\": encrypted_text})\r\n\r\n@app.route(\"/api/vigenere/decrypt\", methods=[\"POST\"])\r\ndef vigenere_decrypt():\r\n    data = request.json\r\n    cipher_text = data[\"cipher_text\"]\r\n    key = data[\"key\"]\r\n    decrypted_text = vigenere_cipher.vigenere_decrypt(cipher_text, key)\r\n    return jsonify({\"decrypted_text\": decrypted_text})\r\n\r\n#Rail Fence Cipher\r\nrailfence_cipher = RailfenceCipher()\r\n@app.route(\"/api/railfence/encrypt\", methods=[\"POST\"])\r\ndef railfence_encrypt():\r\n    data = request.json\r\n    plain_text = data[\"plain_text\"]\r\n    key = int(data[\"key\"])\r\n    encrypted_text = railfence_cipher.railfence_encrypt(plain_text, key)\r\n    return jsonify({\"encrypted_text\": encrypted_text})\r\n@app.route(\"/api/railfence/decrypt\", methods=[\"POST\"])\r\ndef railfence_decrypt():\r\n    data = request.json\r\n    cipher_text = data[\"cipher_text\"]\r\n    key = int(data[\"key\"])\r\n    decrypted_text = railfence_cipher.railfence_decrypt(cipher_text, key)\r\n    return jsonify({\"decrypted_text\": decrypted_text})\r\n\r\nif __name__ == '__main__':\r\n    app.run(host='0.0.0.0', port=5000, debug=True)
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/LAB02/api.py b/LAB02/api.py
+--- a/LAB02/api.py	(revision effffe751a9ad54d0b3ba47c2fa4f87fe7ec5396)
++++ b/LAB02/api.py	(date 1748330473557)
+@@ -1,12 +1,13 @@
+ from flask import Flask, request, jsonify
+ from LAB02.cipher.caesar import CaesarCipher
++from LAB02.cipher.playfair import PlayFairCipher
+ from LAB02.cipher.vigenere import VigenereCipher
+ from LAB02.cipher.railfence import RailfenceCipher
+ app = Flask(__name__)
+ 
+ 
+ #Caesar cipher
+-caesar_cipher = CaesarCipher(shift=0)
++caesar_cipher = CaesarCipher()
+ @app.route("/api/caesar/encrypt", methods=["POST"])
+ def caesar_encrypt():
+     data = request.json
+@@ -59,5 +60,34 @@
+     decrypted_text = railfence_cipher.railfence_decrypt(cipher_text, key)
+     return jsonify({"decrypted_text": decrypted_text})
+ 
++#Playfair Cipher
++playfair_cipher = PlayFairCipher()
++@app.route('/api/playfair/creatematrix', methods=['POST'])
++def playfair_creatematrix():
++    data = request.json
++    key = data['key']
++    playfair_matrix = playfair_cipher.create_playfair_matrix(key)
++    return jsonify({"playfair-matrix: ": playfair_matrix})
++
++@app.route('/api/playfair/encrypt', methods=['POST'])
++def playfair_encrypt():
++    data = request.json
++    plain_text = data['plain_text']
++    key = data['key']
++    playfair_matrix = playfair_cipher.create_playfair_matrix(key)
++    encrypted_text = playfair_cipher.playfair_encrypt(plain_text, playfair_matrix)
++    return jsonify({'encrypted_text': encrypted_text})
++
++@app.route('/api/playfair/decrypt', methods=['POST'])
++def playfair_decrypt():
++    data = request.json
++    cipher_text = data['cipher_text']
++    key = data['key']
++    playfair_matrix = playfair_cipher.create_playfair_matrix(key)
++    decrypted_text = playfair_cipher.playfair_decrypt(cipher_text, playfair_matrix)
++    return jsonify({'decrypted_text': decrypted_text})
++
++
++
+ if __name__ == '__main__':
+     app.run(host='0.0.0.0', port=5000, debug=True)
+\ No newline at end of file

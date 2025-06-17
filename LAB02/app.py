@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request
-from LAB02.cipher.caesar import CaesarCipher
-from LAB02.cipher.playfair import PlayFairCipher
-from LAB02.cipher.vigenere import VigenereCipher
-from LAB02.cipher.railfence import RailfenceCipher
+from cipher.caesar import CaesarCipher
+from cipher.vigenere import VigenereCipher
+from cipher.playfair import PlayFairCipher
+from cipher.railfence import RailfenceCipher
 
 app = Flask(__name__)
 

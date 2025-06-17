@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
-from LAB02.cipher.caesar import CaesarCipher
-from LAB02.cipher.vigenere import VigenereCipher
-from LAB02.cipher.railfence import RailfenceCipher
+from cipher.caesar import CaesarCipher
+from cipher.vigenere import VigenereCipher
+from cipher.railfence import RailfenceCipher
 app = Flask(__name__)
 
 

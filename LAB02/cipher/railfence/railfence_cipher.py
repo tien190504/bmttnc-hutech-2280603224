@@ -1,40 +1,43 @@
-class RailfenceCipher:
+class RailFenceCipher:
     def __init__(self):
         pass
-    def railfence_encrypt(self, plaintext, num_rails):
-        rails = [[] for i in range(num_rails)]
+
+    def rail_fence_encrypt(self, plain_text, num_rails):
+        rails = [[] for _ in range(num_rails)]
         rail_index = 0
-        direction = 1
-        for char in plaintext:
+        direction = 1  # 1: down, -1: up
+        for char in plain_text:
             rails[rail_index].append(char)
             if rail_index == 0:
                 direction = 1
             elif rail_index == num_rails - 1:
                 direction = -1
             rail_index += direction
-        return ''.join(''.join(rail) for rail in rails)
+        cipher_text = "".join("".join(rail) for rail in rails)
+        return cipher_text
 
-    def railfence_decrypt(self, ciphertext, num_rails):
-        rail_lenght = [0] * num_rails
+    def rail_fence_decrypt(self, cipher_text, num_rails):
+        rail_lengths = [0] * num_rails
         rail_index = 0
         direction = 1
-        for _ in range(len(ciphertext)):
-            rail_lenght[rail_index] += 1
+        for _ in range(len(cipher_text)):
+            rail_lengths[rail_index] += 1
             if rail_index == 0:
                 direction = 1
             elif rail_index == num_rails - 1:
                 direction = -1
             rail_index += direction
-        rails =[]
+
+        rails = []
         start = 0
-        for rail_len in rail_lenght:
-            rails.append(ciphertext[start:start+rail_len])
-            start += rail_len
+        for length in rail_lengths:
+            rails.append(cipher_text[start:start + length])
+            start += length
 
         plain_text = ""
         rail_index = 0
         direction = 1
-        for _ in range(len(ciphertext)):
+        for _ in range(len(cipher_text)):
             plain_text += rails[rail_index][0]
             rails[rail_index] = rails[rail_index][1:]
             if rail_index == 0:

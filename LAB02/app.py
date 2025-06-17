@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from cipher.caesar import CaesarCipher
 from cipher.vigenere import VigenereCipher
 from cipher.playfair import PlayFairCipher
-from cipher.railfence import RailfenceCipher
+from cipher.railfence import RailFenceCipher
 
 app = Flask(__name__)
 

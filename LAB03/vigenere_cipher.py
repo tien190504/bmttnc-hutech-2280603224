@@ -15,7 +15,7 @@ class MyApp(QMainWindow):
         url = "http://127.0.0.1:5000/api/vigenere/encrypt"
         payload = {
     "plain_text": self.ui.txt_plain_text.toPlainText(),
-    "key": self.ui.txt_key.text()  # ✅ sửa đúng theo yêu cầu của API Flask
+    "key": self.ui.txt_key.toPlainText()  # ✅ sửa đúng theo yêu cầu của API Flask
 }
         try:
             response = requests.post(url, json=payload)
@@ -35,7 +35,7 @@ class MyApp(QMainWindow):
         url = "http://127.0.0.1:5000/api/vigenere/decrypt"
         payload = {
     "cipher_text": self.ui.txt_cipher_text.toPlainText(),
-    "key": self.ui.txt_key.text()
+    "key": self.ui.txt_key.toPlainText()
 }
         try:
             response = requests.post(url, json=payload)

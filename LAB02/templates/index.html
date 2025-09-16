@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CipherTools - Công cụ Mã hóa Chuyên nghiệp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --dark-light: #374151;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: var(--light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header Styles */
+        .header {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><g fill="rgba(255,255,255,0.05)" fill-rule="evenodd"><circle cx="20" cy="20" r="2"/></g></svg>');
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .student-info {
+            background: var(--accent);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            display: inline-block;
+            font-weight: 600;
+            margin: 0.5rem;
+            box-shadow: var(--shadow-md);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .student-info:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Cipher Grid */
+        .cipher-section {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gray-800);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray-600);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cipher-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .cipher-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+
+        .cipher-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .cipher-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .cipher-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--gray-800);
+        }
+
+        .card-description {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .card-features li::before {
+            content: '✓';
+            color: var(--secondary);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .card-action {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            font-weight: 600;
+            transition: gap 0.3s ease;
+        }
+
+        .cipher-card:hover .card-action {
+            gap: 1rem;
+        }
+
+        /* Features Section */
+        .features {
+            background: var(--gray-100);
+            padding: 4rem 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent), #f97316);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--gray-800);
+        }
+
+        .feature-description {
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gray-800);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-600);
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero {
+                padding: 3rem 0;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .cipher-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cipher-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .cipher-card:nth-child(1) { animation-delay: 0.1s; }
+        .cipher-card:nth-child(2) { animation-delay: 0.2s; }
+        .cipher-card:nth-child(3) { animation-delay: 0.3s; }
+        .cipher-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .feature-item {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 0.2s; }
+        .feature-item:nth-child(2) { animation-delay: 0.3s; }
+        .feature-item:nth-child(3) { animation-delay: 0.4s; }
+        .feature-item:nth-child(4) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <!-- Header content will be loaded here -->
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    Bài Thực Hành Bảo Mật Thông tin Nâng cao
+                </div>
+                <h1>CipherTools</h1>
+                <p class="hero-subtitle">
+                    Khám phá thế giới mã hóa với các thuật toán cổ điển được triển khai hiện đại
+                </p>
+                <div class="student-info">
+                    <i class="fas fa-user-graduate"></i>
+                    Nguyễn Đức Tiến - 2280603224
+                </div>
+                <div class="student-info">
+                    <i class="fas fa-code"></i>
+                    HELLO WORLD!
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cipher Tools Section -->
+    <section class="cipher-section" id="ciphers">
+        <div class="container">
+            <h2 class="section-title">Các Thuật toán Mã hóa</h2>
+            <p class="section-subtitle">
+                Tìm hiểu và thực hành với các thuật toán mã hóa cổ điển được thiết kế với giao diện hiện đại
+            </p>
+
+            <div class="cipher-grid">
+                <!-- Caesar Cipher -->
+                <a href="/caesar" class="cipher-card">
+                    <div class="card-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h3 class="card-title">Caesar Cipher</h3>
+                    <p class="card-description">
+                        Thuật toán mã hóa dịch chuyển cổ điển, dễ hiểu và được sử dụng rộng rãi trong giáo dục mật mã học.
+                    </p>
+                    <ul class="card-features">
+                        <li>Dịch chuyển ký tự theo số bước cố định</li>
+                        <li>Khóa đơn giản (số nguyên 0-25)</li>
+                        <li>Hỗ trợ cả chữ hoa và chữ thường</li>
+                        <li>Giữ nguyên dấu câu và khoảng trắng</li>
+                    </ul>
+                    <div class="card-action">
+                        <span>Khám phá ngay</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+
+                <!-- Playfair Cipher -->
+                <a href="/playfair" class="cipher-card">
+                    <div class="card-icon">
+                        <i class="fas fa-th"></i>
+                    </div>
+                    <h3 class="card-title">Playfair Cipher</h3>
+                    <p class="card-description">
+                        Thuật toán mã hóa ma trận 5x5 phức tạp, mã hóa từng cặp ký tự với độ bảo mật cao hơn.
+                    </p>
+                    <ul class="card-features">
+                        <li>Sử dụng ma trận khóa 5x5</li>
+                        <li>Mã hóa theo cặp ký tự (digram)</li>
+                        <li>Hiển thị ma trận trực quan</li>
+                        <li>Xử lý các quy tắc Playfair chính xác</li>
+                    </ul>
+                    <div class="card-action">
+                        <span>Thử ngay</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+
+                <!-- Vigenère Cipher -->
+                <a href="/vigenere" class="cipher-card">
+                    <div class="card-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3 class="card-title">Vigenère Cipher</h3>
+                    <p class="card-description">
+                        "Mã không thể phá vỡ" - thuật toán đa bảng chữ cái sử dụng từ khóa để tăng độ bảo mật.
+                    </p>
+                    <ul class="card-features">
+                        <li>Mã hóa đa bảng chữ cái</li>
+                        <li>Sử dụng từ khóa làm mã</li>
+                        <li>Khó bị phân tích tần suất</li>
+                        <li>Lặp lại khóa theo độ dài văn bản</li>
+                    </ul>
+                    <div class="card-action">
+                        <span>Bắt đầu</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+
+                <!-- Rail Fence Cipher -->
+                <a href="/railfence" class="cipher-card">
+                    <div class="card-icon">
+                        <i class="fas fa-random"></i>
+                    </div>
+                    <h3 class="card-title">Rail Fence Cipher</h3>
+                    <p class="card-description">
+                        Thuật toán chuyển vị zigzag, sắp xếp văn bản trên nhiều hàng rào theo dạng sóng.
+                    </p>
+                    <ul class="card-features">
+                        <li>Mã hóa chuyển vị (transposition)</li>
+                        <li>Sắp xếp theo dạng zigzag</li>
+                        <li>Số hàng rào là khóa</li>
+                        <li>Minh họa trực quan pattern</li>
+                    </ul>
+                    <div class="card-action">
+                        <span>Trải nghiệm</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Tính năng Nổi bật</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Xử lý Nhanh chóng</h3>
+                    <p class="feature-description">
+                        Mã hóa và giải mã tức thời với hiệu suất cao, không cần chờ đợi.
+                    </p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Responsive Design</h3>
+                    <p class="feature-description">
+                        Giao diện tự thích ứng hoàn hảo trên mọi thiết bị và kích thước màn hình.
+                    </p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="feature-title">Giao diện Hiện đại</h3>
+                    <p class="feature-description">
+                        Thiết kế minimalist, trực quan với trải nghiệm người dùng tối ưu.
+                    </p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="feature-title">Minh họa Trực quan</h3>
+                    <p class="feature-description">
+                        Hiển thị quy trình mã hóa trực quan giúp dễ hiểu thuật toán.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer">
+        <!-- Footer content will be loaded here -->
+    </footer>
+
+    <script>
+        // Load header and footer
+        function loadComponent(elementId, filename) {
+            // For this demo, we'll create the components inline
+            if (elementId === 'header') {
+                document.getElementById('header').innerHTML = `
+                    <div class="container">
+                        <div class="header-content">
+                            <a href="/" class="logo">
+                                <img
+                                src="https://file1.hutech.edu.vn/file/editor/homepage/stories/hinh34/logo%20CMYK-01.png"
+                                alt="HUTECH Logo"
+                                style="height: 40px; object-fit: contain;"
+                                >
+                            </a>
+
+                            <nav>
+                                <ul class="nav-menu">
+                                    <li><a href="/" class="nav-link">Trang chủ</a></li>
+                                    <li><a href="#" class="nav-link">Thuật toán</a></li>
+                                    <li><a href="#" class="nav-link">Tính năng</a></li>
+                                    <li><a href="#" class="nav-link">Giới thiệu</a></li>
+                                </ul>
+                            </nav>
+                            <button class="mobile-menu-btn">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (elementId === 'footer') {
+                document.getElementById('footer').innerHTML = `
+                    <div class="container">
+                        <div class="footer-content">
+                            <div class="footer-section">
+                                <h4>CipherTools</h4>
+                                <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.6;">
+                                    Công cụ mã hóa hiện đại cho việc học tập và nghiên cứu các thuật toán mật mã cổ điển.
+                                </p>
+                            </div>
+                            <div class="footer-section">
+                                <h4>Thuật toán</h4>
+                                <ul class="footer-links">
+                                    <li><a href="/caesar">Caesar Cipher</a></li>
+                                    <li><a href="/playfair">Playfair Cipher</a></li>
+                                    <li><a href="/vigenere">Vigenère Cipher</a></li>
+                                    <li><a href="/railfence">Rail Fence Cipher</a></li>
+                                </ul>
+                            </div>
+                            <div class="footer-section">
+                                <h4>Liên kết</h4>
+                                <ul class="footer-links">
+                                    <li><a href="#">Tài liệu</a></li>
+                                    <li><a href="#">Hướng dẫn</a></li>
+                                    <li><a href="#">API</a></li>
+                                    <li><a href="#">Hỗ trợ</a></li>
+                                </ul>
+                            </div>
+                            <div class="footer-section">
+                                <h4>Thông tin</h4>
+                                <ul class="footer-links">
+                                    <li><a href="#">Giới thiệu</a></li>
+                                    <li><a href="#">Liên hệ</a></li>
+                                    <li><a href="#">Chính sách</a></li>
+                                    <li><a href="#">Bảo mật</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="footer-bottom">
+                            <p>&copy; 2025 CipherTools - Bài thực hành Bảo Mật Thông tin Nâng cao | Nguyễn Đức Tiến - 2280603224 HELLO WORLD !</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Load components
+        loadComponent('header');
+        loadComponent('footer');
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // Observe animated elements
+        document.querySelectorAll('.cipher-card, .feature-item').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+
+        // Add loading state for cipher cards
+        document.querySelectorAll('.cipher-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                this.style.opacity = '0.8';
+                this.style.transform = 'scale(0.98)';
+
+                setTimeout(() => {
+                    this.style.opacity = '';
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
